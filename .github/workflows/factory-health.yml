@@ -27,8 +27,7 @@ jobs:
           private-key: ${{ secrets.MERGERAPTOR_PRIVATE_KEY }}
           owner: projectbluefin
           repositories: common
-          permissions:
-          issues: write
+          permission-issues: write
 
       - name: Monitor 24h factory success rates
         env:

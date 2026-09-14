@@ -28,8 +28,7 @@ jobs:
           owner: projectbluefin
           # Don't request broad permissions; the downstream steps only need
           # to read workflow files from specific consumer repos.
-          permissions:
-            contents: read
+          permission-contents: read
 
       - name: Fetch workflow files
         env:
