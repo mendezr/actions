@@ -12,6 +12,7 @@ Exit 0 on success, non-zero (1) on violation.
 import argparse
 import fnmatch
 import os
+from pathlib import Path
 import re
 import sys
 
@@ -40,13 +41,14 @@ def file_uses_projectbluefin(path):
     return False
 
 
-def find_workflows(root_dir, glob_pattern=".github/workflows/*.yml"):
-    matches = []
-    for dirpath, dirnames, filenames in os.walk(root_dir):
-        for name in filenames:
-            if fnmatch.fnmatch(os.path.join(dirpath, name), glob_pattern):
-                matches.append(os.path.join(dirpath, name))
-    return matches
+def find_workflows(root_dir):
+    """Find all workflow YAML files under root_dir/.github/workflows."""
+    workflows_dir = Path(root_dir) / ".github" / "workflows"
+    if not workflows_dir.is_dir():
+        return []
+    return sorted(
+        str(p) for p in workflows_dir.glob("*") if p.is_file() and p.suffix in {".yml", ".yaml"}
+    )
 
 
 def main():
@@ -55,8 +57,7 @@ def main():
     p.add_argument("--root", default=".", help="Repository root to search")
     args = p.parse_args()
 
-    root = args.root
-    workflows = find_workflows(root, os.path.join(".github", "workflows", "*.yml"))
+    workflows = find_workflows(args.root)
     if not workflows:
         print("No workflow files found under .github/workflows/; nothing to check.")
         return 0
